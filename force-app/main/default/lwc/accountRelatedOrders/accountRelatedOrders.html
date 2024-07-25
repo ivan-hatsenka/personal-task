@@ -1,0 +1,30 @@
+<template>
+    <lightning-card>  
+        <lightning-combobox
+            name="account"
+            label="Account"
+            placeholder="Choose Account"
+            value={accountValue}
+            onchange={handleAccountChange}
+            options={accountOptions}
+        >
+        </lightning-combobox>
+        <lightning-combobox
+            name="orderMonth"
+            label="Order Months"
+            placeholder="Choose order month"
+            value={orderMonthValue}
+            onchange={handleMonthChange}
+            options={orderMonthOptions}
+        >
+        </lightning-combobox>
+            <template if:true={orderData}>
+                <lightning-datatable
+                    key-field="Id"
+                    data={orderData}
+                    columns={orderColumns}
+                >
+                </lightning-datatable>
+            </template>
+        </lightning-card>  
+</template>
