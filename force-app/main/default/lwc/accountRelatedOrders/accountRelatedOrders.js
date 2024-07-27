@@ -2,17 +2,14 @@ import { LightningElement, wire } from 'lwc';
 import getOrders from '@salesforce/apex/OrderController.getOrders';
 import getAccounts from '@salesforce/apex/AccountController.getAccounts';
 import getOrderMonths from '@salesforce/apex/AccountController.getOrderMonths';
-import ORDER_NAME from '@salesforce/schema/Order__c.Name';
-import ORDER_TOTAL_AMOUNT from '@salesforce/schema/Order__c.Total_Amount__c';
-import ORDER_PAYMENT_DUE_DATE from '@salesforce/schema/Order__c.Payment_Due_Date__c';
-import ORDER_ACCOUNT from '@salesforce/schema/Order__c.Account__c';
 
 const columns = [
     { label: 'Order Name', fieldName: 'orderUrl', type: 'url', 
-      typeAttributes: { label: { fieldName: ORDER_NAME.fieldApiName }, target: '_self' } },
-    { label: 'Total Amount', fieldName: ORDER_TOTAL_AMOUNT.fieldApiName, type: 'number' },
-    { label: 'Payment Due Date', fieldName: ORDER_PAYMENT_DUE_DATE.fieldApiName, type: 'date' },
-    { label: 'Account', fieldName: ORDER_ACCOUNT.fieldApiName, type: 'text' }
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' } },
+    { label: 'Total Amount', fieldName: 'Total_Amount__c', type: 'number'  },
+    { label: 'Payment Due Date', fieldName: 'Payment_Due_date__c', type: 'date', cellAttributes: { alignment: 'center' } },
+    { label: 'Account', fieldName: 'accountUrl', type: 'url', 
+        typeAttributes: { label: { fieldName: 'accountName' }, target: '_blank' }}
 ];
 
 const allMonths = [
@@ -78,7 +75,10 @@ export default class AccountRelatedOrders extends LightningElement {
         if (data) {
             this.orderData = data.map(record => ({
                 ...record,
-                orderUrl: `/lightning/r/Order__c/${record.Id}/view`
+                orderUrl: `/lightning/r/Order__c/${record.Id}/view`,
+                accountUrl: `/lightning/r/Order__c/${record.Account__c}/view`,
+                accountName: record.Account__r.Name
+                
             }));
             this.error = undefined;
         } else if (error) {

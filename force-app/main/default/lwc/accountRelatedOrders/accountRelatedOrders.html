@@ -1,23 +1,27 @@
 <template>
-    <lightning-card>  
-        <lightning-combobox 
-            name="account"
-            label="Select Account"
-            value={selectedAccount}
-            placeholder="Select an Account"
-            options={accounts}
-            onchange={handleAccountChange}
-            >
-        </lightning-combobox>
-        <lightning-combobox
-            name="orderMonth"
-            label="Order Months"
-            value={selectedMonth}
-            placeholder="Choose Order month"
-            options={months}
-            onchange={handleMonthChange}
-            >
-        </lightning-combobox>
+    <lightning-card> 
+        <div class="main-flexbox">
+            <div class="flex-container">
+                <lightning-combobox class="combobox"
+                    name="account"
+                    label="Select Account"
+                    value={selectedAccount}
+                    placeholder="Select an Account"
+                    options={accounts}
+                    onchange={handleAccountChange}
+                    >
+                </lightning-combobox>
+                <lightning-combobox class="combobox"
+                    name="orderMonth"
+                    label="Order Months"
+                    value={selectedMonth}
+                    placeholder="Choose Order month"
+                    options={months}
+                    onchange={handleMonthChange}
+                    >
+                </lightning-combobox>
+            </div>
+            <div class="datatable">
             <template if:true={orderData}>
                 <lightning-datatable
                     key-field="Id"
@@ -26,5 +30,7 @@
                 >
                 </lightning-datatable>
             </template>
+            </div>
+        </div>
         </lightning-card>  
 </template>

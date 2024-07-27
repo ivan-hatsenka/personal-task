@@ -13,6 +13,9 @@ public with sharing class AccountController {
                 Date orderDate = order.Payment_Due_date__c;
                 Integer monthNumber = orderDate.month();
                 uniqueMonths.add(monthNumber);
+                if(uniqueMonths.size() == 12){
+                    break;
+                }
             }
         }
         List<Integer> months = new List<Integer>(uniqueMonths);
