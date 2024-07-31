@@ -1,36 +1,40 @@
 <template>
     <lightning-card> 
-        <div class="main-flexbox">
-            <div class="flex-container">
-                <lightning-combobox class="combobox"
-                    name="account"
-                    label="Select Account"
-                    value={selectedAccount}
-                    placeholder="Select an Account"
-                    options={accounts}
-                    onchange={handleAccountChange}
-                    >
-                </lightning-combobox>
-                <lightning-combobox class="combobox"
-                    name="orderMonth"
-                    label="Order Months"
-                    value={selectedMonth}
-                    placeholder="Choose Order month"
-                    options={months}
-                    onchange={handleMonthChange}
-                    >
-                </lightning-combobox>
+        <template if:false={errors.length}>
+            <div class="main-flexbox">
+                <div class="flex-container">
+                    <lightning-combobox class="combobox"
+                        name="account"
+                        label="Select Account"
+                        value={selectedAccount}
+                        placeholder="Select an Account"
+                        options={accounts}
+                        onchange={handleAccountChange}
+                        ></lightning-combobox>
+                    <lightning-combobox class="combobox"
+                        name="orderMonth"
+                        label="Order Months"
+                        value={selectedMonth}
+                        placeholder="Choose Order month"
+                        options={months}
+                        onchange={handleMonthChange}
+                        ></lightning-combobox>
+                </div>
+                <div class="datatable">
+                    <lightning-datatable
+                        key-field="Id"
+                        data={filteredOrderData}
+                        columns={orderColumns}
+                        show-row-number-column
+                        hide-checkbox-column
+                    ></lightning-datatable>
+                </div>
             </div>
-            <div class="datatable">
-            <template if:true={orderData}>
-                <lightning-datatable
-                    key-field="Id"
-                    data={filteredOrderData}
-                    columns={orderColumns}
-                >
-                </lightning-datatable>
-            </template>
+        </template>
+        <template if:true={errors.length}>
+            <div class="error-block">
+                <p class="error"><b>Error encountered!</b><br>Errors: {errors}</p>
             </div>
-        </div>
-        </lightning-card>  
+        </template>
+    </lightning-card>  
 </template>

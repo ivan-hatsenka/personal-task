@@ -1,15 +1,33 @@
 import { LightningElement, wire } from 'lwc';
+import { reduceErrors } from 'c/ldsUtils';
 import getOrders from '@salesforce/apex/OrderController.getOrders';
 import getAccounts from '@salesforce/apex/AccountController.getAccounts';
 import getOrderMonths from '@salesforce/apex/AccountController.getOrderMonths';
 
 const columns = [
-    { label: 'Order Name', fieldName: 'orderUrl', type: 'url', 
-        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' } },
-    { label: 'Total Amount', fieldName: 'Total_Amount__c', type: 'number'  },
-    { label: 'Payment Due Date', fieldName: 'Payment_Due_date__c', type: 'date', cellAttributes: { alignment: 'center' } },
-    { label: 'Account', fieldName: 'accountUrl', type: 'url', 
-        typeAttributes: { label: { fieldName: 'accountName' }, target: '_blank' }}
+    {
+        label: 'Order Name', 
+        fieldName: 'orderUrl', 
+        type: 'url', 
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+    },
+    {
+        label: 'Total Amount', 
+        fieldName: 'Total_Amount__c', 
+        type: 'number',
+        cellAttributes: { alignment: 'left' } 
+    },
+    {
+        label: 'Payment Due Date', 
+        fieldName: 'Payment_Due_date__c', 
+        type: 'date', 
+    },
+    {
+        label: 'Account', 
+        fieldName: 'accountUrl', 
+        type: 'url', 
+        typeAttributes: { label: { fieldName: 'accountName' }, target: '_blank' }
+    }
 ];
 
 const allMonths = [
@@ -19,24 +37,26 @@ const allMonths = [
 
 
 export default class AccountRelatedOrders extends LightningElement {
-    error;
-    orderData;
+    errorAccounts = [];
+    errorMonths = [];
+    errorOrders = [];
+    orderData = [];
     accounts = [];
     selectedAccount;
     selectedMonth;
     months = [];
-    value;
+    orderColumns = columns;
 
-    //accounts
+    //Accounts
     @wire(getAccounts)
     wiredAccounts({ error, data }) {
         if (data) {
             this.accounts = data.map(account => {
                 return { value: account.Id, label: account.Name };
             });
-            this.error = undefined;
+            this.errorAccounts = [];
         } else if (error) {
-            this.error = error;
+            this.errorAccounts = reduceErrors(error);
             this.accounts = [];
         }
     }
@@ -47,16 +67,16 @@ export default class AccountRelatedOrders extends LightningElement {
         this.selectedMonth = '';
     }
 
-    //month
+    //Month
     @wire(getOrderMonths, { accountId: '$selectedAccount' })
     wiredMonths({ error, data }) {
         if (data) {
             this.months = data.map(month => {
                 return { value: month, label: allMonths[month - 1]  };
             });
-            this.error = undefined;
+            this.errorMonths = [];
         } else if (error) {
-            this.error = error;
+            this.errorMonths = reduceErrors(error);
             this.months = [];
         }
     }
@@ -64,12 +84,9 @@ export default class AccountRelatedOrders extends LightningElement {
 
     handleMonthChange(event) {
         this.selectedMonth = +event.detail.value;
-        console.log(this.selectedMonth);
     }
 
     //Records
-    orderColumns = columns;
-
     @wire(getOrders)
     wiredOrders({ error, data }) {
         if (data) {
@@ -80,18 +97,22 @@ export default class AccountRelatedOrders extends LightningElement {
                 accountName: record.Account__r.Name
                 
             }));
-            this.error = undefined;
+            this.errorOrders = [];
         } else if (error) {
-            this.error = error;
+            this.errorOrders = reduceErrors(error);
             this.orderData = undefined;
         }
     }
 
     get filteredOrderData() {
         return this.orderData.filter(order => {
-            console.log(order.Payment_Due_date__c.slice(5,7));
             return (order.Account__c == this.selectedAccount && +order.Payment_Due_date__c.slice(5,7) == this.selectedMonth);
         });
         
+    }
+
+    //Errors
+    get errors() {
+        return this.errorAccounts.concat(this.errorMonths, this.errorOrders);
     }
 }
