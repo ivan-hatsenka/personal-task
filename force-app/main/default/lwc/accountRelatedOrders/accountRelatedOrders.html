@@ -20,8 +20,9 @@
                         onchange={handleMonthChange}
                         ></lightning-combobox>
                 </div>
-                <div class="datatable">
+                <div class="datatable-wrapper">
                     <lightning-datatable
+                        class="datatable"
                         key-field="Id"
                         data={filteredOrderData}
                         columns={orderColumns}

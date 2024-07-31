@@ -3,6 +3,7 @@
     flex-direction: column; 
     align-items: center;
     gap: 24px;
+    
 }
 
 .flex-container {
@@ -15,9 +16,16 @@
     width: 40%
 }
 
-.datatable {
+.datatable-wrapper {
     width: 90%;
-    margin-bottom: 24px
+    margin-bottom: 24px;
+    max-height: 40vh;
+}
+
+.datatable {
+    height: 20vh;
+    overflow-y: auto;
+    display: block;
 }
 
 .error {
